@@ -6,23 +6,24 @@ pathenv = Path('../.env')
 load_dotenv(dotenv_path=pathenv)
 config = dotenv_values()
 
-def extract_value(output):
+def extract_values(output):
     # Regular expressions for extracting values
     string_pattern = re.compile(r'=\s*STRING:\s*"([^"]+)"')
     gauge_pattern = re.compile(r'=\s*Gauge32:\s*(\d+)')
     
-    # Try to match STRING pattern
-    match = string_pattern.search(output)
-    if match:
-        return match
+    # Find all STRING matches
+    strings = string_pattern.findall(output)
+    if strings:
+        return strings
     
-    # Try to match Gauge32 pattern
-    match = gauge_pattern.search(output)
-    if match:
-        return match.group(1)
+    # Find all Gauge32 matches
+    gauges = gauge_pattern.findall(output)
+    if gauges:
+        return gauges
     
     # Return raw output if no pattern matched
-    return output
+    return [output]
+
 
 def snmpwalk(ip, community, oid):
     command = f"snmpwalk -v 2c -c {community} {ip} {oid}"
@@ -52,5 +53,9 @@ def show_snmpwalk():
         name = item["name"]
         oid_value = item["oid"]
         result = snmpwalk(router_ip, community, oid_value)
-        format_result = extract_value(result)
-        print(f"\n{name.replace('_', ' ').title()}: {format_result}")
+        values = extract_values(result)  # Now expecting a list of values
+
+        # Print each value for this OID
+        print(f"\n{name.replace('_', ' ').title()}:")
+        for value in values:
+            print(f"  - {value}")
