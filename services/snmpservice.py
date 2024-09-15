@@ -12,6 +12,7 @@ def extract_values(output):
     # Regular expressions for extracting values
     string_pattern = re.compile(r'=\s*STRING:\s*"([^"]+)"')
     gauge_pattern = re.compile(r"=\s*Gauge32:\s*(\d+)")
+    counter_pattern = re.compile(r'\b(\d+)\s*=\s*Counter32:\s*(\d+)')
 
     # Find all STRING matches
     strings = string_pattern.findall(output)
@@ -21,7 +22,14 @@ def extract_values(output):
     # Find all Gauge32 matches
     gauges = gauge_pattern.findall(output)
     if gauges:
-        return gauges
+        return gauges   
+    
+      # Find all Counter32 matches for traffic data
+    counters = counter_pattern.findall(output)
+    if counters:
+        # Format the counters as "Interface Index: Counter Value"
+        formatted_counters = [f"Interface {index}: {value}" for index, value in counters]
+        return formatted_counters
 
     # Return raw output if no pattern matched
     return [output]
