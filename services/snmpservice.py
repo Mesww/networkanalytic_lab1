@@ -14,7 +14,7 @@ def extract_value(output):
     # Try to match STRING pattern
     match = string_pattern.search(output)
     if match:
-        return match.group(1)
+        return match
     
     # Try to match Gauge32 pattern
     match = gauge_pattern.search(output)
