@@ -47,10 +47,10 @@ oids = [
     "oid":"1.3.6.1.2.1.2.2.1.5"
 },
        ]
-
-for item in oids:
-    name = item["name"]
-    oid_value = item["oid"]
-    result = snmpwalk(router_ip, community, oid_value)
-    format_result = extract_value(result)
-    print(f"\n{name.replace('_', ' ').title()}: {format_result}")
+def show_snmpwalk():
+    for item in oids:
+        name = item["name"]
+        oid_value = item["oid"]
+        result = snmpwalk(router_ip, community, oid_value)
+        format_result = extract_value(result)
+        print(f"\n{name.replace('_', ' ').title()}: {format_result}")
